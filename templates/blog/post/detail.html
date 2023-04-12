@@ -1,0 +1,116 @@
+{% extends 'base/base.html' %}
+{% load comment_filter %}
+{% load static %}
+
+{% block title %}
+    {{ post.title }}
+{% endblock title %}
+
+{% block content %}
+<div class="row justify-content-center">
+
+    <div class="col-lg-10">
+        <div class="col-md-8 mx-auto">
+            <h1 class="mb-4">{{ post.title }}</h1>
+        </div>
+        <div class="text-center">
+            <img src="{{ post.image_url }}" alt="" class="img-fluid mx-auto d-block mb-3">
+        </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <p class="card-text">{{ post.body|linebreaks }}</p>
+        </div>
+        <div class="card-footer text-muted">
+          <p class="mb-0">@{{ post.author }} - {{ post.publish|date:"F d, Y" }}</p>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="row d-flex justify-content-center">
+  <div class="col-md-8 col-lg-6">
+          <h1>Comments</h1>
+    <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+      <div class="card-body p-4">
+        <div class="form-outline mb-4" id="comments">
+          <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+              <label for="{{ field.id_for_label }}" class="form-label">
+                <strong><i>{{ field.label }}</i></strong>
+              </label>
+              {{ field }}
+            {% endfor %}
+            <button type="submit" class="btn btn-info mt-2">Add</button>
+          </form>
+        </div>
+        <hr>
+        {% if post.comments.count %}
+            {% for comment in post.comments.all %}
+            <div class="card mb-4" id="commentLike{{ comment.id }}">
+              <div class="card-body">
+                  {% if request.user.is_superuser %}
+                  <a href="{% url 'blog:comment_admin' comment_id=comment.id %}" class="text-decoration-none">
+                      {% if comment.active %}
+                      <button class="btn-sm btn-warning ms-auto">Disabled</button>
+                      {% else %}
+                      <button class="btn-sm btn-success ms-auto">Enabled</button>
+                      {% endif %}
+                  </a>
+                  <a href="" class="text-decoration-none">
+                    <button class="btn-sm btn-danger ms-auto">Delete</button>
+                  </a>
+                  <hr>
+                  {% endif %}
+
+                <p class="small text-muted mb-2">added {{ comment.created|timesince}} ago</p>
+
+                  <div class="d-flex flex-row align-items-center">
+                  {% if comment.active %}
+                    <p>{{ comment.body }}</p>
+                  {% else %}
+                    <p class="text-danger"><i>Comment was disabled</i></p>
+                  {% endif %}
+                  </div>
+
+                <div class="d-flex justify-content-between">
+                  <div class="d-flex flex-row align-items-center">
+                      <i class="fas fa-user mx-1"></i>
+                      <p class="small mb-0 ms-2">@{{ comment.author }}</p>
+                  </div>
+
+                  {% if comment|is_liked_by:request.user %}
+                  <div class="d-flex flex-row align-items-center text-primary">
+                    <p class="small mb-0">Unlike</p>
+                      <a href="{% url 'blog:comment_like' comment_id=comment.id %}">
+                        <i class="fas fa-thumbs-up mx-2 fa-xs" style="margin-top: -0.16rem;"></i>
+                      </a>
+                    <p class="small mb-0">{{ comment.likes_count }}</p>
+                  </div>
+                  {% else %}
+                  <div class="d-flex flex-row align-items-center">
+                      <p class="small text-muted mb-0">Like</p>
+                      <a href="{% url 'blog:comment_like' comment_id=comment.id %}">
+                          <i class="far fa-thumbs-up mx-2 fa-xs text-black" style="margin-top: -0.16rem;"></i>
+                      </a>
+                      <p class="small text-muted mb-0">{{ comment.likes_count }}</p>
+                  </div>
+                  {% endif %}
+
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <p>No comments yet.</p>
+          {% endif %}
+        <hr>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="{% static 'js/scroll_comments.js' %}"></script>
+{% endblock content %}

@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    Register page
+{% endblock title %}
+
+{% block content %}
+<h2>Registration</h2>
+<form method="POST" class="col-md-4">
+    {% csrf_token %}
+    {% for field in form %}
+        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+        {{ field }}
+    {% endfor %}
+    <button type="submit" class="btn btn-primary mt-2">Submit</button>
+</form>
+{% endblock content %}

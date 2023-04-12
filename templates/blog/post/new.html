@@ -1,0 +1,21 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    {{ post.title }}
+{% endblock title %}
+
+{% block content %}
+
+<h2>New post</h2>
+
+<form method="POST" class="col-md-8 mb-3">
+    {% csrf_token %}
+    {% for field in form %}
+        <label class="form-label badge bg-primary text-wrap mt-3" for="{{ field.auto_id }}">
+            {{ field.label }}
+        </label>
+        {{ field }}
+    {% endfor %}
+    <button type="submit" class="btn btn-info mt-2">Add post</button>
+</form>
+{% endblock content %}

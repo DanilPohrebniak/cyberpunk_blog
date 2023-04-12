@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    Edit post {{ post.pk }}
+{% endblock title %}
+
+{% block content %}
+
+{% if request.user == post.author or request.user.is_superuser %}
+<h2>Edit post with ID: {{ post.pk }}</h2>
+
+<form method="POST" class="col-md-8 mb-3">
+    {% csrf_token %}
+    {% for field in form %}
+        <label class="form-label badge bg-primary text-wrap mt-3" for="{{ field.auto_id }}">
+            {{ field.label }}
+        </label>
+        {{ field }}
+    {% endfor %}
+    <button type="submit" class="btn btn-info mt-2">Edit post</button>
+</form>
+{% else %}
+    <div class="alert alert-danger col-md-9">
+        <ul>
+            <li>You don't have access to edit this post</li>
+            <li>
+                <a href="{{ post.get_absolute_url }}" class="text-decoration-none">
+                    Go back
+                </a>
+            </li>
+        </ul>
+    </div>
+{% endif %}
+
+{% endblock content %}

@@ -1,0 +1,57 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    All posts
+{% endblock title %}
+
+{% block content %}
+<h1>
+    {% if author %}
+    Posts by author <i>@{{ author.username }}</i>
+    {% else %}
+    All posts
+    {% endif %}
+</h1>
+<hr>
+{% with page=posts %}
+    {% include 'base/pagination.html' %}
+{% endwith %}
+
+{% if request.user.profile %}
+    Profile exist
+{% else %}
+    Profile not exist
+{% endif %}
+
+<div class="row mb-2">
+    {% for post in posts %}
+    <div class="col-md-6">
+      <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-primary">World</strong>
+          <h3 class="mb-2">{{ post.title }}</h3>
+          <div class="mb-1 text-muted fw-bold">{{ post.updated|date:"l d M Y" }}</div>
+          <div class="mb-2 text-muted fst-italic">{{ post.publish|timesince }} ago</div>
+          <p class="card-text mb-auto">{{ post.body|truncatewords:10 }}</p>
+          <a href="{{ post.get_absolute_url }}" class="link-dark">Continue reading</a>
+        </div>
+        <div class="col-auto d-none d-lg-block">
+            <img src="{{ post.image_url }}" alt="" width="300" height="200">
+            <p>Posted by:
+                <a href="{% url 'blog:post_list' %}?author={{ post.author.username }}">
+                @{{ post.author.username }}
+                </a>
+                <br>
+                <a href="{% url 'blog:post_update' pk=post.pk %}" class="text-decoration-none">
+                    <button class="btn btn-info">Edit</button>
+                </a>
+                <a href="{% url 'blog:post_delete' pk=post.pk %}" class="text-decoration-none">
+                    <button class="btn btn-danger">Delete</button>
+                </a>
+            </p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

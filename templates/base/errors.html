@@ -1,0 +1,33 @@
+{% if form_errors %}
+  <div class="alert alert-danger col-md-9">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"
+              style="position: absolute; top: 0; right: 0; font-size: smaller; background-color: inherit; border: none">
+          <span aria-hidden="true" id="close_alert" onclick="closeAlert()">
+            <strong style="font-size: 1.5rem;">&times;</strong>
+          </span>
+      </button>
+    <ul>
+      {% for field, errors in form_errors.items %}
+        {% for error in errors %}
+          <li>{{ field }}: {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% if form.non_field_errors %}
+    <div class="alert alert-danger col-md-9">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"
+              style="position: absolute; top: 0; right: 0; font-size: smaller; background-color: inherit; border: none">
+          <span aria-hidden="true" id="close_alert" onclick="closeAlert()">
+            <strong style="font-size: 1.5rem;">&times;</strong>
+          </span>
+      </button>
+        <ul>
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
